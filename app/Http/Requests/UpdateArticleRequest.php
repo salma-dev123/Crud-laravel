@@ -16,34 +16,17 @@ class UpdateArticleRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-
-    protected function prepareForValidation(): void {
-        $this->merge(
-            [
-                'slug'=> $this->input('slug') ?: Str::slug ($this->input('title'))
-            ]
-            );
-    }
-
     public function rules(): array
     {
-        $article= $this->route('article');
         return [
             'title'   => ['required','string','min:3','max:150'],
-            'slug'    => ['required','string','max:180',Rule::unique('articles','slug')->ignore($article)],
-            'content' => ['required','string','min:20'],
+            'slug'    => ['nullable','string','max:180','unique:articles,slug'],
+            'excerpt' => ['nullable','string','max:255'],
+            'content' => ['nullable','string'],
         ];
     }
 
-    public function messages(): array
-    {
-        return [
-            'slug.unique' => 'Ce slug est déjà pris par un autre article.',
-        ];
-    }
+    
+
+    
 }
