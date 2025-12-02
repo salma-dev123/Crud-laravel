@@ -13,9 +13,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ArticleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index():View
     {
         $articles = Article::latest('id')->paginate(5);
