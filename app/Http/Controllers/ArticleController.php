@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 
 
 class ArticleController extends Controller
@@ -25,7 +26,7 @@ class ArticleController extends Controller
      */
     public function create(): View
     {
-        return view('articles.create');
+        return view('admin.articles.create');
     }
 
     /**
@@ -33,11 +34,14 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request): RedirectResponse
     {
+        if (! Gate::allows('create-article')) {
+        abort(403);
+        }
         $data = $request->validated();
         $data['slug'] ??= Str::slug($data['title']);
         Article::create($data);
 
-        return redirect()->route('articles.index')->with('status', '✅ Article créé avec succès.');
+        return redirect()->route('admin.articles.index')->with('status', '✅ Article créé avec succès.');
     }
 
    
@@ -46,7 +50,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article): View
     {
-        return view('articles.edit', compact('article'));
+        return view('admin.articles.edit', compact('article'));
     }
 
     /**
@@ -58,7 +62,7 @@ class ArticleController extends Controller
         $data['slug']= $data['slug'] ?: Str::slug($data['title']);
         $article->update($data);
 
-        return redirect()->route('articles.index')->with('status', '✏️ Article mis à jour avec succès.');
+        return redirect()->route('admin.articles.index')->with('status', '✏️ Article mis à jour avec succès.');
     }
 
     /**
@@ -66,7 +70,10 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article):redirectResponse
     {
+        if (! Gate::allows('delete-article', $article)) {
+        abort(403);
+        }
         $article->delete();
-        return redirect()->route('articles.index')->with('status', '🗑️ Article supprimé avec succès.');
+        return redirect()->route('admin.articles.index')->with('status', '🗑️ Article supprimé avec succès.');
     }
 }
