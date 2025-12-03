@@ -39,6 +39,8 @@ class ArticleController extends Controller
         }
         $data = $request->validated();
         $data['slug'] ??= Str::slug($data['title']);
+        $data['user_id'] = auth()->id();
+    
         Article::create($data);
 
         return redirect()->route('admin.articles.index')->with('status', '✅ Article créé avec succès.');

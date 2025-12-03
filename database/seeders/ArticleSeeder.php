@@ -40,6 +40,7 @@ class ArticleSeeder extends Seeder
                         'excerpt' => $data['excerpt'] ?? null,
                          'views'     => (int)($data['views'] ?? 0),
                          'published' => filter_var($data['published'] ?? true, FILTER_VALIDATE_BOOL),
+                         'user_id'   => 1,
                     ]
                     );
          }
