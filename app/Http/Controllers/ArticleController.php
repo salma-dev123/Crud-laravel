@@ -72,9 +72,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article):redirectResponse
     {
-        if (! Gate::allows('delete-article', $article)) {
-        abort(403);
-        }
+        $this->authorize('delete', $article);
+        
         $article->delete();
         return redirect()->route('admin.articles.index')->with('status', '🗑️ Article supprimé avec succès.');
     }
